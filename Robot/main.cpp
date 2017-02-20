@@ -10,6 +10,7 @@ DigitalEncoder right_encoder(FEHIO::P3_0);
 DigitalEncoder left_encoder(FEHIO::P3_1);
 FEHMotor right_motor(FEHMotor::Motor1,12.0);
 FEHMotor left_motor(FEHMotor::Motor0,12.0);
+AnalogInputPin CdS_cell(FEHIO::P0_0);
 
 void move_forward(int percent, int counts) //using encoders
 {
@@ -72,6 +73,15 @@ void turn_left(int percent, int counts) //using encoders
     left_motor.Stop();
 }
 
+void wait_for_light(){
+    bool off = true;
+    while (off){
+        float x = CdS_cell.Value();
+        //if (color changes from no color to red color) {
+            off = false;
+    //}
+    }
+}
 
 int main(void)
 {
