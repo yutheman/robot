@@ -73,7 +73,7 @@ void turn_left(int percent, int counts) //using encoders
     left_motor.Stop();
 }
 
-void wait_for_light(){
+bool wait_for_light(){
     bool off = true;
     while (off){
         float x = CdS_cell.Value();
@@ -81,6 +81,7 @@ void wait_for_light(){
             off = false;
     //}
     }
+    return off;
 }
 
 int main(void)
@@ -91,14 +92,12 @@ int main(void)
     LCD.Clear( FEHLCD::Black );
     LCD.SetFontColor( FEHLCD::White );
 
-    while( true )
+    while( !(wait_for_light) )
     {
-        if( LCD.Touch(&x,&y) )
-        {
-            LCD.WriteLine( "Hello World!" );
-            Sleep( 100 );
-            Sleep(1000);
-        }
+        //assuming the front wheels are facing the stairs, first move forward all the way to the stairs
+        //turn left 90 degrees to face the stairs
+        //move forward up the stairs
+        //turn like 45 degrees and move forward to the button
     }
     return 0;
 }
