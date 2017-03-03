@@ -3,6 +3,7 @@
 #include <FEHUtility.h>
 #include <FEHMotor.h>
 #include <FEHRPS.h>
+#include <FEHServo.h>
 //-----------------------------------MAKE LEFT MOTOR PERCENT NEGATIVE WHEN YOU WANT IT TO MOVE FORWARD-----------------
 //Declarations for encoders & motors
 DigitalEncoder right_encoder(FEHIO::P0_3);
@@ -10,6 +11,9 @@ DigitalEncoder left_encoder(FEHIO::P0_4); //broken pins is left encoder
 FEHMotor right_motor(FEHMotor::Motor1,12.0);
 FEHMotor left_motor(FEHMotor::Motor0,12.0);
 AnalogInputPin CdS_cell(FEHIO::P0_1);
+FEHServo arm_base(FEHServo::Servo0);
+//MAX VALUE = 2360
+//MINIMUM VALUE = 500
 
 void move_forward(int percent, int counts) //using encoders
 {
@@ -25,7 +29,7 @@ void move_forward(int percent, int counts) //using encoders
     //keep running motors
     while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts);
 
-    //Turn off motors
+    //Turn off motors       `
     right_motor.Stop();
     left_motor.Stop();
 }
@@ -89,6 +93,9 @@ bool wait_for_light(){
     }
     return true;
 }
+void rotate_arm(int degrees){
+    //arm_base
+}
 
 void check_red_or_blue(){
     float x = CdS_cell.Value();
@@ -110,39 +117,49 @@ int main(void)
 
     LCD.Clear( FEHLCD::Black );
     LCD.SetFontColor( FEHLCD::White );
+    //set up the arm
+    arm_base.SetMin(500);
+    arm_base.SetMax(2360);
+    arm_base.SetDegree(0);
     while( wait_for_light() )
     {
         //from start position to button
-        move_forward(30.,465);
-        turn_left(30.,225); //face the wall (90 degree turn)
-        move_forward(30., 101); //position robot under ramp
+        move_forward(15.,500);
+        turn_left(15.,225); //face the wall (90 degree turn)
+        move_forward(15., 121); //position robot under ramp
         check_red_or_blue();
         Sleep(1000);
-        move_forward(30.,304);
-        turn_left(30.,225); //face the ramp
+        move_forward(30.,320);
+        turn_left(30.,200); //face the ramp
         move_forward(50.,1000); //move up the ramp, 1944
-        turn_right(30, 100); //turn slightly to face the button
+        turn_right(30, 130); //turn slightly to face the button
         move_forward(30,200); //aligning the robot with the button
       //  turn_left(30,50); //turn the robot so that it faces the button
         move_forward(30,770); //cover remaining distance to the button
         Sleep(6.0);
 
-        //getitng to the lever
-        move_forward(-30., 709); //move backward 17.5 inches
+        //getting to the lever
+        move_forward(-30., 640); //move backward 17.5 inches
         turn_left(30.,225);
-        move_forward(30., 420);
+        move_forward(30., 515);
+        //rotate the wheel
+        arm_base.SetDegree(110);
+        Sleep(1.0);
+        move_forward(-30,100);
+//        arm_base.SetDegree(0);
 
-        //do something here to toggle the lever
 
-        //get to the color
-        move_forward(-30,405); //reverse so that the robot is positioned above the ramp
-        turn_left(30,225); //to face the ramp
-        move_forward(30,1100); //move down ramp
-        turn_right(30, 225); //face the left wall
-        move_forward(30, 290); //move so that the CdS cell is above the light
-        //call function to determine the light (whether it is red or blue)
+//        //get to the color
+//        move_forward(-30,325); //reverse so that the robot is positioned above the ramp
+//        turn_left(30,225); //to face the ramp
+//        move_forward(30,1100); //move down ramp
+//        turn_right(30, 225); //face the left wall
+//        move_forward(30, 290); //move so that the CdS cell is above the light
+//        //call function to determine the light (whether it is red or blue)
 
 }
 
     return 0;
 }
+
+
