@@ -34,11 +34,9 @@ void move_forward(int percent, int counts) //using encoders
     left_motor.Stop();
 }
 void read_color(){
-    while(true){
     float x = CdS_cell.Value();
     LCD.WriteLine(x);
     Sleep(1.);
-    }
 }
 
 void turn_right(int percent, int counts) //using encoders
@@ -100,7 +98,7 @@ void rotate_arm(int degrees){
 void check_red_or_blue(){
     float x = CdS_cell.Value();
     while (true){
-    if (x < 1.1){
+    if (x < 0.4){
         LCD.Clear(FEHLCD::Red);
         break;
     } else {
@@ -112,7 +110,6 @@ void check_red_or_blue(){
 
 int main(void)
 {
- Sleep(1.);
     float x,y;
 
     LCD.Clear( FEHLCD::Black );
