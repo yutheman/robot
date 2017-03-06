@@ -7,13 +7,148 @@
 //-----------------------------------MAKE LEFT MOTOR PERCENT NEGATIVE WHEN YOU WANT IT TO MOVE FORWARD-----------------
 //Declarations for encoders & motors
 DigitalEncoder right_encoder(FEHIO::P0_3);
-DigitalEncoder left_encoder(FEHIO::P0_4); //broken pins is left encoder
+DigitalEncoder left_encoder(FEHIO::P0_4);
 FEHMotor right_motor(FEHMotor::Motor1,12.0);
 FEHMotor left_motor(FEHMotor::Motor0,12.0);
 AnalogInputPin CdS_cell(FEHIO::P0_1);
-FEHServo arm_base(FEHServo::Servo0);
-//MAX VALUE = 2360
-//MINIMUM VALUE = 500
+FEHServo arm_base(FEHServo::Servo0);        //MAX VALUE = 2360, MINIMUM VALUE = 500
+
+//microswitches
+DigitalInputPin frontRight(FEHIO::P0_3);
+DigitalInputPin frontLeft(FEHIO::P0_4);
+DigitalInputPin backRight(FEHIO::P0_5);
+DigitalInputPin backLeft(FEHIO::P0_6);
+
+bool red;
+
+void check_x_plus(float x_coordinate) //using RPS while robot is in the +x direction
+{
+    //check whether the robot is within an acceptable range
+    while(RPS.X() < x_coordinate - 1 || RPS.X() > x_coordinate + 1)
+    {
+        if(RPS.X() > x_coordinate)
+        {
+            //pulse the motors for a short duration in the correct direction
+
+            right_motor.SetPercent(-30);
+            left_motor.SetPercent(-30);
+            Sleep(1);
+            right_motor.SetPercent(0);
+            left_motor.SetPercent(0);
+        }
+        else if(RPS.X() < x_coordinate)
+        {
+            //pulse the motors for a short duration in the correct direction
+
+            right_motor.SetPercent(30);
+            left_motor.SetPercent(30);
+            Sleep(1);
+            right_motor.SetPercent(0);
+            left_motor.SetPercent(0);
+        }
+    }
+}
+
+void check_y_minus(float y_coordinate) //using RPS while robot is in the -y direction
+{
+    //check whether the robot is within an acceptable range
+    while(RPS.Y() < y_coordinate - 1 || RPS.Y() > y_coordinate + 1)
+    {
+        if(RPS.Y() > y_coordinate)
+        {
+            //pulse the motors for a short duration in the correct direction
+            right_motor.SetPercent(-30);
+            left_motor.SetPercent(-30);
+            Sleep(1);
+            right_motor.SetPercent(0);
+            left_motor.SetPercent(0);
+
+        }
+        else if(RPS.Y() < y_coordinate)
+        {
+            //pulse the motors for a short duration in the correct direction
+
+            right_motor.SetPercent(30);
+            left_motor.SetPercent(30);
+            Sleep(1);
+            right_motor.SetPercent(0);
+            left_motor.SetPercent(0);
+        }
+    }
+}
+
+void check_y_plus(float y_coordinate) //using RPS while robot is in the +y direction
+{
+    //check whether the robot is within an acceptable range
+    while(RPS.Y() < y_coordinate - 1 || RPS.Y() > y_coordinate + 1)
+    {
+        if(RPS.Y() > y_coordinate)
+        {
+            //pulse the motors for a short duration in the correct direction
+
+            right_motor.SetPercent(30);
+            left_motor.SetPercent(30);
+            Sleep(1);
+            right_motor.SetPercent(0);
+            left_motor.SetPercent(0);
+        }
+        else if(RPS.Y() < y_coordinate)
+        {
+            //pulse the motors for a short duration in the correct direction
+
+            right_motor.SetPercent(-30);
+            left_motor.SetPercent(-30);
+            Sleep(1);
+            right_motor.SetPercent(0);
+            left_motor.SetPercent(0);
+        }
+    }
+}
+
+void check_heading(float heading) //using RPS
+{
+
+     if(heading ==0){
+     while(RPS.Heading() < 180 || RPS.Heading() >180 &&( RPS.Heading() > 3 || RPS.Heading() < 357) )// || RPS.Heading() < heading - 357) //|| RPS.Heading() > heading +357)
+        {
+         if (RPS.Heading() < 180)
+         {
+             right_motor.SetPercent(10);
+             left_motor.SetPercent(-10);
+        }
+
+      if (RPS.Heading() > 180)
+      {
+          right_motor.SetPercent(-10);
+          left_motor.SetPercent(10);
+
+            }
+
+        }
+     }
+     else{
+         while(RPS.Heading() < heading - 3 || RPS.Heading() > heading + 3)// || RPS.Heading() < heading - 357) //|| RPS.Heading() > heading +357)
+            {
+             if (RPS.Heading() < heading)
+             {
+                 right_motor.SetPercent(10);
+                 left_motor.SetPercent(-10);
+            }
+
+          if (RPS.Heading() > heading)
+          {
+              right_motor.SetPercent(-10);
+              left_motor.SetPercent(10);
+                }
+
+    }
+     }
+     right_motor.SetPercent(0);
+     left_motor.SetPercent(0);
+    //you will need to fill out this one yourself and take into account
+    //the edge conditions (when you want the robot to go to 0 degrees
+    //or close to 0 degrees)
+}
 
 void move_forward(int percent, int counts) //using encoders
 {
@@ -100,9 +235,11 @@ void check_red_or_blue(){
     while (true){
     if (x < 0.4){
         LCD.Clear(FEHLCD::Red);
+        red = true;
         break;
     } else {
         LCD.Clear(FEHLCD::Blue);
+        red = false;
         break;
     }
     }
@@ -143,7 +280,28 @@ int main(void)
         arm_base.SetDegree(110);
         Sleep(1.0);
         move_forward(-30,100);
+        //reset so that the arm is facing up
+        arm_base.SetDegree(0);
 //        arm_base.SetDegree(0);
+
+        //get to the core sample
+        move_forward(-30,608); //move away from the lever
+        turn_right(30,145); //turn right to face the sample
+        move_forward(30,1013); //move forward to the sample
+        //----------DO SERVO MOTOR STUFF HERE TO GRAB THE SAMPLE
+        move_forward(-30,284); //back up a little
+        turn_left(30,225); //turn to face the antenna
+        move_forward(30,1924); //move forward all the way down the ramp to touch the antenna
+        turn_left(30,225); //turn left to face the red/blue button
+        move_forward(30,648); //move forward to align under the button
+
+        if (red){
+            turn_right(30,140);
+            move_forward(30,344);
+        } else {
+            turn_left(30,140);
+            move_forward(30,344);
+        }
 
 
 //        //get to the color
