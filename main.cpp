@@ -262,22 +262,32 @@ int main(void)
     while( wait_for_light() )
     {
         //from start position to button
-        move_forward(15.,465);
+        move_forward(15.,485);
         turn_left(15.,225); //face the wall (90 degree turn)
-        move_forward(15., 162); //move under the red/blue light
+        move_forward(15., 145); //move under the red/blue light
         check_red_or_blue();
         Sleep(1000);
         move_forward(30.,270); //position robot under ramp
-        turn_left(30.,225); //face the ramp
+
+        move_forward(30.,400);
+        turn_right(30,225);
+        move_forward(30.,100);
+        move_forward(-30.,50);
+        turn_left(30,225);
+        move_forward(-30., 400);
+
+        turn_left(30.,200); //face the ramp
         move_forward(50.,1000); //move up the ramp, 1944
-        turn_right(30, 30); //turn slightly to face the button
+        turn_right(30, 140); //turn slightly to face the button
         move_forward(30,200); //aligning the robot with the button
       //  turn_left(30,50); //turn the robot so that it faces the button
+        arm_base.SetDegree(105);
         move_forward(30,770); //cover remaining distance to the button
         Sleep(6.0);
 
         //getting to the lever
-        move_forward(-30., 603); //move backward 17.5 inches
+        move_forward(-30., 560); //move backward 17.5 inches
+        arm_base.SetDegree(5);
         turn_left(30.,225);
         move_forward(30., 570);
         //rotate the wheel
@@ -287,31 +297,37 @@ int main(void)
         arm_base.SetDegree(5);  //reset so that the arm is facing up
 
         //get to the core sample
-        move_forward(-30,608); //move away from the lever
-        turn_right(30,140); //turn slightly right to face the sample
+        move_forward(-30,620); //move away from the lever
+        turn_right(30,138); //turn slightly right to face the sample
         move_forward(30,700); //move forward to the sample
 
         //adjust the servo arm to get the sample
         arm_base.SetDegree(145);
         Sleep(2.0);
         move_forward(30,150);
-        arm_base.SetDegree(100);
+        arm_base.SetDegree(120);
         Sleep(2.0);
         move_forward(-60,284); //back up to take out the core sample
-       // arm_base.SetDegree(70);
-        turn_left(30,390); //turn to face the antenna
-        move_forward(30,1600); //move forward all the way down the ramp to touch the antenna
-        turn_right(30,225); //turn right to face the red/blue light
-        move_forward(30,648); //move forward to align under the light
+        //arm_base.SetDegree(100);
+        turn_left(30,350); //turn to face the antenna
+        arm_base.SetDegree(120);
+        move_forward(30,1500); //move forward all the way down the ramp to touch the antenna
+        turn_right(30.,75);
+        move_forward(30.,200);
+        arm_base.SetDegree(145);
+        turn_right(30,280); //turn right to face the red/blue light
+        move_forward(30,270); //move forward to align under the light
 
         if (red){
             turn_right(30,140);
             move_forward(30,344);
+            arm_base.SetDegree(145);
         } else {
             turn_left(30,140);
             move_forward(30,344);
+            arm_base.SetDegree(145);
         }
-
+        arm_base.SetDegree(45);
 
 //        //get to the color
 //        move_forward(-30,325); //reverse so that the robot is positioned above the ramp
