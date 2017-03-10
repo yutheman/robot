@@ -342,13 +342,13 @@ int main(void)
         turn_right(30, 130); //turn slightly to face the button
         move_forward(30,200); //aligning the robot with the button
         move_forward(30,770); //cover remaining distance to the button
-        Sleep(6.0);
+        Sleep(1.0);
 
         //getting to the lever
         move_forward(-30., 580); //move backward 17.5 inches
         arm_base.SetDegree(5);
         turn_left(30.,240);
-        move_forward(30., 570);
+        move_forward(30., 600);
         //trigger the lever
         arm_base.SetDegree(90);
         Sleep(1.0);
@@ -356,8 +356,8 @@ int main(void)
         arm_base.SetDegree(5);  //reset so that the arm is facing up
 
         //get to the core sample
-        move_forward(-30,570); //move away from the lever
-        turn_right(30,145); //turn slightly right to face the sample
+        move_forward(-30,545); //move away from the lever
+        turn_right(30,148); //turn slightly right to face the sample
         move_forward(30,700); //move forward to the sample
 
         //adjust the servo arm to get the sample
@@ -368,17 +368,19 @@ int main(void)
         Sleep(2.0);
         move_forward(-60,600); //back up to take out the core sample
         //arm_base.SetDegree(100);
-        turn_left(30,380); //turn to face the antenna
+        turn_left(30,405); //turn to face the antenna
 
-        check_heading(0);
+      //  check_heading(0);
 
-        arm_base.SetDegree(90);
-        move_forward(30,1500);
+        arm_base.SetDegree(100);
+        move_forward(30,1450);
         Sleep(500);//move forward all the way down the ramp to touch the antenna
         //turn_right(30.,30);
+        turn_right(30,100);
         Sleep(500);
         move_forward(30.,160);
         Sleep(500);
+        arm_base.SetDegree(90);
         arm_base.SetDegree(145);
         Sleep(500);
         //turn_right(30,280); //turn right to face the red/blue light
@@ -386,10 +388,20 @@ int main(void)
         //Sleep(3000);
         arm_base.SetDegree(100);
         arm_base.SetDegree(145);
-        arm_base.SetDegree(70);
+        arm_base.SetDegree(65);
+        arm_base.SetDegree(100);
+        arm_base.SetDegree(145);
+        arm_base.SetDegree(65);
+        arm_base.SetDegree(100);
+        arm_base.SetDegree(145);
+        arm_base.SetDegree(65);
         move_forward(-30,100);
         arm_base.SetDegree(90);
-    Sleep(1000);
+        Sleep(1000);
+        arm_base.SetDegree(0);
+        move_forward(-30, 100);
+        turn_left(30,200);
+        move_forward(30,450);
 //        if (red){
 //            turn_right(30,140);
 //            move_forward(30,344);
