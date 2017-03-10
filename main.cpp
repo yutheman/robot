@@ -14,10 +14,10 @@ AnalogInputPin CdS_cell(FEHIO::P0_1);
 FEHServo arm_base(FEHServo::Servo0);        //MAX VALUE = 2360, MINIMUM VALUE = 500
 
 //microswitches
-DigitalInputPin frontRight(FEHIO::P0_3);
-DigitalInputPin frontLeft(FEHIO::P0_4);
-DigitalInputPin backRight(FEHIO::P0_5);
-DigitalInputPin backLeft(FEHIO::P0_6);
+DigitalInputPin frontRight(FEHIO::P2_0);
+DigitalInputPin frontLeft(FEHIO::P2_1);
+DigitalInputPin backRight(FEHIO::P2_2);
+DigitalInputPin backLeft(FEHIO::P2_3);
 
 bool red;
 
@@ -262,7 +262,7 @@ void move_frontBump(int percent, int counts) //using encoders
     //While the average of the left and right encoder is less than counts,
     //keep running motors
     bool stuck = false;
-    while(frontLeft.Value() == 1 && frontRight.Value() == 1 && !stuck ){
+    while(frontLeft.Value() == 1 || frontRight.Value() == 1 && !stuck ){
         if((left_encoder.Counts() + right_encoder.Counts()) / 2. > counts){
            stuck = true;
         }
@@ -287,7 +287,7 @@ void move_backBump(int percent, int counts) //using encoders
     //keep running motors
 
     bool stuck = false;
-    while(backtLeft.Value() == 1 && backRight.Value() == 1 && !stuck){
+    while(backLeft.Value() == 1 || backRight.Value() == 1 && !stuck){
         if((left_encoder.Counts() + right_encoder.Counts()) / 2. > counts){
            stuck = true;
         }
@@ -309,6 +309,8 @@ int main(void)
     arm_base.SetMin(500);
     arm_base.SetMax(2360);
     arm_base.SetDegree(5);
+
+
     while( wait_for_light() )
     {
         //from start position to button
@@ -330,12 +332,12 @@ int main(void)
         turn_left(30.,200); //face the ramp
         move_forward(50.,1000); //move up the ramp, 1944
 
-        turn_right(20,225);
-        move_frontBump(20,500);
-        move_forward(-20,100);
-        turn_left(20,225);
-        check_heading(90);
-        move_frontBump(20,800);
+//        turn_right(30,290);
+//        move_frontBump(30,800);
+//        move_forward(-30,100);
+//        turn_left(30,225);
+//        check_heading(180);
+//        move_frontBump(20,800);
 
         turn_right(30, 130); //turn slightly to face the button
         move_forward(30,200); //aligning the robot with the button
@@ -354,7 +356,7 @@ int main(void)
         arm_base.SetDegree(5);  //reset so that the arm is facing up
 
         //get to the core sample
-        move_forward(-30,580); //move away from the lever
+        move_forward(-30,570); //move away from the lever
         turn_right(30,145); //turn slightly right to face the sample
         move_forward(30,700); //move forward to the sample
 
@@ -368,7 +370,7 @@ int main(void)
         //arm_base.SetDegree(100);
         turn_left(30,380); //turn to face the antenna
 
-        check_heading(20,270);
+        check_heading(0);
 
         arm_base.SetDegree(90);
         move_forward(30,1500);
@@ -411,5 +413,3 @@ int main(void)
 
     return 0;
 }
-
-
