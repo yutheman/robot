@@ -249,21 +249,53 @@ void check_red_or_blue(){
     }
 }
 
-void MovetillFront(int approx, int percent){
+void move_frontBump(int percent, int counts) //using encoders
+{
+    //Reset encoder counts
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
 
-//    right_encoder.ResetCounts();
-//    left_encoder.ResetCounts();
+    //Set both motors to desired percent
+    right_motor.SetPercent(percent);
+    left_motor.SetPercent(-percent);
 
-//    //Set both motors to desired percent
-//    right_motor.SetPercent(percent);
-//    left_motor.SetPercent(-percent);
-//    while(frontLeft.Value() == 1 && frontRight == 1){
-//        if((left_encoder.
-  //  Counts() + right_encoder.Counts()) / 2. < approx){
+    //While the average of the left and right encoder is less than counts,
+    //keep running motors
+    bool stuck = false;
+    while(frontLeft.Value() == 1 && frontRight.Value() == 1 && !stuck ){
+        if((left_encoder.Counts() + right_encoder.Counts()) / 2. > counts){
+           stuck = true;
+        }
+    }
 
-//        }
-//    }
-//    return;
+    //Turn off motors       `
+    right_motor.Stop();
+    left_motor.Stop();
+}
+
+void move_backBump(int percent, int counts) //using encoders
+{
+    //Reset encoder counts
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+
+    //Set both motors to desired percent
+    right_motor.SetPercent(percent);
+    left_motor.SetPercent(-percent);
+
+    //While the average of the left and right encoder is less than counts,
+    //keep running motors
+
+    bool stuck = false;
+    while(backtLeft.Value() == 1 && backRight.Value() == 1 && !stuck){
+        if((left_encoder.Counts() + right_encoder.Counts()) / 2. > counts){
+           stuck = true;
+        }
+    }
+
+    //Turn off motors       `
+    right_motor.Stop();
+    left_motor.Stop();
 }
 
 
@@ -297,10 +329,16 @@ int main(void)
 
         turn_left(30.,200); //face the ramp
         move_forward(50.,1000); //move up the ramp, 1944
+
+        turn_right(20,225);
+        move_frontBump(20,500);
+        move_forward(-20,100);
+        turn_left(20,225);
+        check_heading(90);
+        move_frontBump(20,800);
+
         turn_right(30, 130); //turn slightly to face the button
         move_forward(30,200); //aligning the robot with the button
-      //  turn_left(30,50); //turn the robot so that it faces the button
-        //arm_base.SetDegree(105);
         move_forward(30,770); //cover remaining distance to the button
         Sleep(6.0);
 
@@ -329,6 +367,9 @@ int main(void)
         move_forward(-60,600); //back up to take out the core sample
         //arm_base.SetDegree(100);
         turn_left(30,380); //turn to face the antenna
+
+        check_heading(20,270);
+
         arm_base.SetDegree(90);
         move_forward(30,1500);
         Sleep(500);//move forward all the way down the ramp to touch the antenna
