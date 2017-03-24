@@ -11,7 +11,8 @@ DigitalEncoder left_encoder(FEHIO::P1_1);
 FEHMotor right_motor(FEHMotor::Motor1,12.0);
 FEHMotor left_motor(FEHMotor::Motor0,12.0);
 AnalogInputPin CdS_cell(FEHIO::P0_1);
-FEHServo arm_base(FEHServo::Servo0);        //MAX VALUE = 2360, MINIMUM VALUE = 500
+FEHServo arm_base(FEHServo::Servo0);//MAX VALUE = 2360, MINIMUM VALUE = 500
+FEHServo hand_base(FEHServo::Servo1);
 
 //microswitches
 DigitalInputPin frontRight(FEHIO::P2_0);
@@ -31,7 +32,7 @@ void check_x_plus(float x_coordinate) //using RPS while robot is in the +x direc
             //pulse the motors for a short duration in the correct direction
 
             right_motor.SetPercent(-30);
-            left_motor.SetPercent(-30);
+            left_motor.SetPercent(30);
             Sleep(1);
             right_motor.SetPercent(0);
             left_motor.SetPercent(0);
@@ -41,7 +42,7 @@ void check_x_plus(float x_coordinate) //using RPS while robot is in the +x direc
             //pulse the motors for a short duration in the correct direction
 
             right_motor.SetPercent(30);
-            left_motor.SetPercent(30);
+            left_motor.SetPercent(-30);
             Sleep(1);
             right_motor.SetPercent(0);
             left_motor.SetPercent(0);
@@ -58,7 +59,7 @@ void check_y_minus(float y_coordinate) //using RPS while robot is in the -y dire
         {
             //pulse the motors for a short duration in the correct direction
             right_motor.SetPercent(-30);
-            left_motor.SetPercent(-30);
+            left_motor.SetPercent(30);
             Sleep(1);
             right_motor.SetPercent(0);
             left_motor.SetPercent(0);
@@ -69,7 +70,7 @@ void check_y_minus(float y_coordinate) //using RPS while robot is in the -y dire
             //pulse the motors for a short duration in the correct direction
 
             right_motor.SetPercent(30);
-            left_motor.SetPercent(30);
+            left_motor.SetPercent(-30);
             Sleep(1);
             right_motor.SetPercent(0);
             left_motor.SetPercent(0);
@@ -87,7 +88,7 @@ void check_y_plus(float y_coordinate) //using RPS while robot is in the +y direc
             //pulse the motors for a short duration in the correct direction
 
             right_motor.SetPercent(30);
-            left_motor.SetPercent(30);
+            left_motor.SetPercent(-30);
             Sleep(1);
             right_motor.SetPercent(0);
             left_motor.SetPercent(0);
@@ -97,7 +98,7 @@ void check_y_plus(float y_coordinate) //using RPS while robot is in the +y direc
             //pulse the motors for a short duration in the correct direction
 
             right_motor.SetPercent(-30);
-            left_motor.SetPercent(-30);
+            left_motor.SetPercent(30);
             Sleep(1);
             right_motor.SetPercent(0);
             left_motor.SetPercent(0);
@@ -109,36 +110,36 @@ void check_heading(float heading) //using RPS
 {
 
      if(heading ==0){
-     while(RPS.Heading() < 180 || RPS.Heading() >180 &&( RPS.Heading() > 3 || RPS.Heading() < 357) )// || RPS.Heading() < heading - 357) //|| RPS.Heading() > heading +357)
+     while(RPS.Heading() < 180 || RPS.Heading() >180 &&( RPS.Heading() > 5 || RPS.Heading() < 355) )// || RPS.Heading() < heading - 357) //|| RPS.Heading() > heading +357)
         {
-         if (RPS.Heading() < 180)
+         if (RPS.Heading() > 180)
          {
-             right_motor.SetPercent(10);
-             left_motor.SetPercent(-10);
+             right_motor.SetPercent(15);
+             left_motor.SetPercent(15);
         }
 
-      if (RPS.Heading() > 180)
+      if (RPS.Heading() < 180)
       {
-          right_motor.SetPercent(-10);
-          left_motor.SetPercent(10);
+          right_motor.SetPercent(-15);
+          left_motor.SetPercent(-15);
 
             }
 
         }
      }
      else{
-         while(RPS.Heading() < heading - 3 || RPS.Heading() > heading + 3)// || RPS.Heading() < heading - 357) //|| RPS.Heading() > heading +357)
+         while(RPS.Heading() < heading - 5 || RPS.Heading() > heading + 5)// || RPS.Heading() < heading - 357) //|| RPS.Heading() > heading +357)
             {
              if (RPS.Heading() < heading)
              {
-                 right_motor.SetPercent(10);
-                 left_motor.SetPercent(-10);
+                 right_motor.SetPercent(20);
+                 left_motor.SetPercent(20);
             }
 
           if (RPS.Heading() > heading)
           {
-              right_motor.SetPercent(-10);
-              left_motor.SetPercent(10);
+              right_motor.SetPercent(-20);
+              left_motor.SetPercent(-20);
                 }
 
     }
@@ -308,7 +309,8 @@ void moveUntilWallFront(int percent){
     left_motor.SetPercent(-percent);
 
     //keep moving until both front bumpers are closed
-    while (frontLeft.Value() == 1 && frontRight.Value() == 1){
+    while (!(frontLeft.Value() == 0
+             && frontRight.Value() == 0)){
 
     }
     //Turn off motors
@@ -326,7 +328,7 @@ void moveUntilWallBack(int percent){
     left_motor.SetPercent(-percent);
 
     //keep moving until both front bumpers are closed
-    while (backLeft.Value() == 1 && backRight.Value() == 1){
+    while (!(backLeft.Value() == 0 && backRight.Value() == 0)){
 
     }
     //Turn off motors
@@ -340,29 +342,61 @@ int main(void)
 
     LCD.Clear( FEHLCD::Black );
     LCD.SetFontColor( FEHLCD::White );
+    RPS.InitializeTouchMenu();
     //set up the arm
     arm_base.SetMin(500);
     arm_base.SetMax(2360);
     arm_base.SetDegree(5);
 
+    hand_base.SetMin(600);
+    hand_base.SetMax(2360);
+    hand_base.SetDegree(110);
+
+
+
+
 
     while( wait_for_light() )
     {
-        move_forward(30,430);
+        move_forward(30,400);
         turn_left(7,250);
+
+        move_forward(30, 485);
+        turn_left(30.,250); //face the ramp
+    //    check_heading(0);
+        move_forward(50.,900); //move up the ramp, 1944//
+        move_forward(-30.,800); //move up the ramp, 1944
+        turn_right(30.,270); //face the ramp
+
         moveUntilWallFront(20);
         Sleep(3000);
-        move_forward(-30,100);
-        turn_right(7,250);
-        move_forward(15,200);
+        move_forward(-30,325);
+        turn_right(7,260);
+      //  check_heading(270);
+        arm_base.SetDegree(90);
+        Sleep(1000);
+        move_forward(30,450);
+        arm_base.SetDegree(110);
+        Sleep(1000);
 
         //move away from satellite and align with the left wall
-        move_forward(-15,270);
-        turn_left(7,250);
-        moveUntilWallBack(-20);
+        move_forward(-50,300);
+        //turn_left(7,200);
+arm_base.SetDegree(5);
+        check_heading(0);
+        turn_left(20,500);
+
+
+
+        //check_heading(180);
+
+
+        //moveUntilWallBack(-20);
+        move_forward(-20,1000);
         Sleep(3000);
-        turn_left(7,250);
-        move_forward(15,350);
+        move_forward(20,100);
+        turn_right(30  ,250);
+        move_forward(-20,800);
 
 
 
