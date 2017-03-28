@@ -363,10 +363,10 @@ int main(void)
 
 //ENHANCED: read light
         move_forward(20,400);
-        check_y_minus(XXXXXXXXX);
+        check_y_minus(XXXXXXXXX);//yval of light
         turn_left(20,250);
         move_forward(15,130);
-        check_x_plus(XXXXXXXXXX);
+        check_x_plus(XXXXXXXXXX);//xval of light
         check_red_or_blue();
         Sleep(1000);
         turn_left(15,15);
@@ -375,19 +375,19 @@ int main(void)
         moveUntilWallFront(20);
         Sleep(1000);
         move_forward(-30,250);
-        check_x_plus(XXXXXXX);
+        check_x_plus(XXXXXXX);//xval of antenna
         turn_right(7,260);
         arm_base.SetDegree(90);
         Sleep(1000);
         move_forward(30,400);
-        check_y_minus(XXXXXXX);
+        check_y_minus(XXXXXXX);//yval of fully pushed antenna
         arm_base.SetDegree(120);
         Sleep(1000);
         move_forward(-50,270);
-        check_y_minus(XXXXXXXXX);
+        check_y_minus(XXXXXXXXX);//yval of being in the clear
         arm_base.SetDegree(5);
         check_heading(0,10.);
-        check_x_plus(XXXXXXXXX);
+        check_x_plus(XXXXXXXXX);//xval of being below the ramp
         turn_left(30.,245);
 
 //ENHANCED: hitting button
@@ -404,11 +404,14 @@ int main(void)
 
 //ENHANCED: Toggle Lever
         move_forward(-30., 520);
-        check_y_plus(XXXXXXXXXXX);
+        check_y_plus(XXXXXXXXXXX);//yval of lever
         arm_base.SetDegree(5);
         turn_left(30.,240);
-        move_forward(30., 600);
-        check_x_minus(XXXXXXXXXXXXX);
+        check_heading(180,3);
+        moveUntilWallBack(20);
+        Sleep(1000);
+        move_forward(30., 630);
+        check_x_minus(XXXXXXXXXXXXX);//xval of lever
         arm_base.SetDegree(105);
         Sleep(1.0);
         move_forward(-30,100);
@@ -417,11 +420,11 @@ int main(void)
 //ENHANCED: Gather Core Sample
         moveUntilWallBack(-30);
         move_forward(30,100);
-        check_x_minus(XXXXXXXX);
+        check_x_minus(XXXXXXXX);//xval of core alignment
         Sleep(2000);
         turn_right(30,130);
         float angle = atan((XXXXXX-RPS.Y())/(XXXXXXX-RPS.X())); //(lever 'YValue')(Lever 'XValue)
-        check_heading(angle);
+        check_heading(angle,10.);
         move_forward(30,700);
         arm_base.SetDegree(145);
         Sleep(2.0);
@@ -429,12 +432,16 @@ int main(void)
         arm_base.SetDegree(120);
         Sleep(2.0);
         move_forward(-60,550);
-        check_x_minus(XXXXXXXX);
+//        if(RPS.X()==-1){
+//            move_forward(30,20);
+//            move_forward(-60,500);
+//        }
+        check_x_minus(XXXXXXXX);//xval of ramp
         check_heading(270,10.);
 
 //ENHANCED: Drop Sample into Bucket
         move_forward(1200);
-        check_y_minus(XXXXXXXX);
+        check_y_minus(XXXXXXXX);//yval of location to dump sample
         if(red){
             turn_right(20,140);
             move_forward(300);
