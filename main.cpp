@@ -4,6 +4,7 @@
 #include <FEHMotor.h>
 #include <FEHRPS.h>
 #include <FEHServo.h>
+#include <math.h>
 //-----------------------------------MAKE LEFT MOTOR PERCENT NEGATIVE WHEN YOU WANT IT TO MOVE FORWARD-----------------
 //Declarations for encoders & motors
 DigitalEncoder right_encoder(FEHIO::P1_0);
@@ -43,6 +44,34 @@ void check_x_plus(float x_coordinate) //using RPS while robot is in the +x direc
 
             right_motor.SetPercent(30);
             left_motor.SetPercent(-30);
+            Sleep(100);
+            right_motor.SetPercent(0);
+            left_motor.SetPercent(0);
+        }
+    }
+}
+
+void check_x_minus(float x_coordinate) //using RPS while robot is in the -x direction
+{
+    //check whether the robot is within an acceptable range
+    while(RPS.X() < x_coordinate - 1 || RPS.X() > x_coordinate + 1)
+    {
+        if(RPS.X() > x_coordinate)
+        {
+            //pulse the motors for a short duration in the correct direction
+
+            right_motor.SetPercent(30);
+            left_motor.SetPercent(-30);
+            Sleep(100);
+            right_motor.SetPercent(0);
+            left_motor.SetPercent(0);
+        }
+        else if(RPS.X() < x_coordinate)
+        {
+            //pulse the motors for a short duration in the correct direction
+
+            right_motor.SetPercent(-30);
+            left_motor.SetPercent(30);
             Sleep(100);
             right_motor.SetPercent(0);
             left_motor.SetPercent(0);
@@ -106,7 +135,7 @@ void check_y_plus(float y_coordinate) //using RPS while robot is in the +y direc
     }
 }
 
-void check_heading(float heading) //using RPS
+void check_heading(float heading, float timeOut) //using RPS
 {
     int to1 = TimeNow();
 
@@ -127,7 +156,7 @@ void check_heading(float heading) //using RPS
           Sleep(10);
 
             }
-      if(TimeNow() -to1 >= 10.){
+      if(TimeNow() -to1 >= timeOut){
         break;
       }
 
@@ -151,7 +180,7 @@ void check_heading(float heading) //using RPS
               Sleep(10);
 
                 }
-          if(TimeNow() -to1 >= 10.){
+          if(TimeNow() -to1 >= timeOut){
             break;
           }
 
@@ -324,40 +353,138 @@ int main(void)
     while( wait_for_light() )
     {
 
-        //from start position to button
-        move_forward(15.,500);
-        turn_left(15.,260); //face the wall (90 degree turn)
-        move_forward(15., 170); //move under the red/blue light
+//        //from start position to button
+//        move_forward(15,500);
+//        turn_left(15.,260); //face the wall (90 degree turn)
+//        move_forward(15., 170); //move under the red/blue light
+//        check_red_or_blue();
+//        Sleep(1000);
+//        turn_left(15,20);
+
+//ENHANCED: read light
+        move_forward(20,400);
+        check_y_minus(XXXXXXXXX);
+        turn_left(20,250);
+        move_forward(15,130);
+        check_x_plus(XXXXXXXXXX);
         check_red_or_blue();
         Sleep(1000);
-        turn_left(15,25);
+        turn_left(15,15);
 
-//        move_forward(30,400);
-//        turn_left(7,250);
-
-//        move_forward(30, 485);
-//        turn_left(30.,250); //face the ramp
-//    //    check_heading(0);
-//        move_forward(50.,900); //move up the ramp, 1944//
-//        move_forward(-30.,800); //move up the ramp, 1944
-//        turn_right(30.,270); //face the ramp
-
+//ENHANCED: turn satelite
         moveUntilWallFront(20);
-        Sleep(3000);
-        move_forward(-30,325);
+        Sleep(1000);
+        move_forward(-30,250);
+        check_x_plus(XXXXXXX);
         turn_right(7,260);
-      //  check_heading(270);
         arm_base.SetDegree(90);
         Sleep(1000);
-        move_forward(30,450);
-        arm_base.SetDegree(110);
+        move_forward(30,400);
+        check_y_minus(XXXXXXX);
+        arm_base.SetDegree(120);
         Sleep(1000);
-
-        //move away from satellite and align with the left wall
-        move_forward(-50,300);
+        move_forward(-50,270);
+        check_y_minus(XXXXXXXXX);
         arm_base.SetDegree(5);
-        check_heading(0);
-        move_forward(-30,70);
+        check_heading(0,10.);
+        check_x_plus(XXXXXXXXX);
+        turn_left(30.,245);
+
+//ENHANCED: hitting button
+        move_forward(50.,1100);
+        turn_right(30, 280); //turn slightly to face the button
+        moveUntilWallFront(30);
+        move_forward(-30,60); //aligning the robot with the button
+        turn_left(30,250);
+        moveUntilWallFront(30);
+        move_forward(-30,200);
+        arm_base.SetDegree(110);
+        move_forward(30,200);
+        Sleep(6000);
+
+//ENHANCED: Toggle Lever
+        move_forward(-30., 520);
+        check_y_plus(XXXXXXXXXXX);
+        arm_base.SetDegree(5);
+        turn_left(30.,240);
+        move_forward(30., 600);
+        check_x_minus(XXXXXXXXXXXXX);
+        arm_base.SetDegree(105);
+        Sleep(1.0);
+        move_forward(-30,100);
+        arm_base.SetDegree(5);
+
+//ENHANCED: Gather Core Sample
+        moveUntilWallBack(-30);
+        move_forward(30,100);
+        check_x_minus(XXXXXXXX);
+        Sleep(2000);
+        turn_right(30,130);
+        float angle = atan((XXXXXX-RPS.Y())/(XXXXXXX-RPS.X())); //(lever 'YValue')(Lever 'XValue)
+        check_heading(angle);
+        move_forward(30,700);
+        arm_base.SetDegree(145);
+        Sleep(2.0);
+        move_forward(30,150);
+        arm_base.SetDegree(120);
+        Sleep(2.0);
+        move_forward(-60,550);
+        check_x_minus(XXXXXXXX);
+        check_heading(270,10.);
+
+//ENHANCED: Drop Sample into Bucket
+        move_forward(1200);
+        check_y_minus(XXXXXXXX);
+        if(red){
+            turn_right(20,140);
+            move_forward(300);
+            hand_base.SetDegree(0);
+        }
+        else{
+            turn_right(20,40);
+            move_forward(200);
+            hand_base.SetDegree(0);
+        }
+        arm_base.SetDegree(0);
+
+//ENHANCED: Push Final Button
+        move_forward(-30,100);
+        check_heading(180,3);
+        moveUntilWallFront(30);
+        move_forward(-30,150);
+        turn_right(20,250);
+        moveUntilWallFront(30);
+
+
+//        //from start position to button
+//        move_forward(15,500);
+//        turn_left(15.,260); //face the wall (90 degree turn)
+//        move_forward(15., 170); //move under the red/blue light
+//        check_red_or_blue();
+//        Sleep(1000);
+//        turn_left(15,20);
+
+//        //from start position to button
+//        move_forward(15,500);
+//        turn_left(15.,260); //face the wall (90 degree turn)
+//        move_forward(15., 170); //move under the red/blue light
+//        check_red_or_blue();
+//        Sleep(1000);
+//        turn_left(15,20);
+
+
+//        //move away from satellite and align with the left wall
+//        move_forward(-30,325);
+//        turn_right(7,260);
+//        arm_base.SetDegree(90);
+//        Sleep(1000);
+//        move_forward(30,450);
+//        arm_base.SetDegree(110);
+//        Sleep(1000);
+//        move_forward(-50,320);
+//        arm_base.SetDegree(5);
+//        check_heading(0);
+//        move_forward(-30,70);
 
 
 //Hitting Final button
@@ -369,96 +496,79 @@ int main(void)
 
 
 
+//        turn_left(30.,245); //face the ramp
+//        move_forward(50.,1000); //move up the ramp, 1944
+//        turn_right(30, 250); //turn slightly to face the button
+//        moveUntilWallFront(30);
+//        move_forward(-30,60); //aligning the robot with the button
+//        turn_left(30,250);
+//        moveUntilWallFront(30);
+//        move_forward(-30,200);
+//        arm_base.SetDegree(110);
+//        move_forward(30,200);
 
 
 
-        turn_left(30.,245); //face the ramp
-        move_forward(50.,1000); //move up the ramp, 1944
 
-
-
-        turn_right(30, 250); //turn slightly to face the button
-        moveUntilWallFront(30);
-        move_forward(-30,60); //aligning the robot with the button
-        turn_left(30,250);
-        moveUntilWallFront(30);
-        move_forward(-30,200);
-        arm_base.SetDegree(110);
-        move_forward(30,200);
-
-        //move_forward(30,770); //cover remaining distance to the button
-        Sleep(1.0);
-
-        //getting to the lever
-        move_forward(-30., 570); //move backward 17.5 inches
-        arm_base.SetDegree(5);
-        turn_left(30.,240);
-        move_forward(30., 650);
-        //trigger the lever
-        arm_base.SetDegree(105);
-        Sleep(1.0);
-        move_forward(-30,100);
-        arm_base.SetDegree(5);  //reset so that the arm is facing up
-
-//        //LEVER UPDATED
-//        move_forward(-30., 530); //move backward 17.5 inches
-//        //check
+//        //getting to the lever
+//        move_forward(-30., 570); //move backward 17.5 inches
 //        arm_base.SetDegree(5);
 //        turn_left(30.,240);
-//        move_forward(30., 600);
+//        move_forward(30., 650);
 //        //trigger the lever
-//        arm_base.SetDegree(90);
+//        arm_base.SetDegree(105);
 //        Sleep(1.0);
 //        move_forward(-30,100);
 //        arm_base.SetDegree(5);  //reset so that the arm is facing up
 
-        //get to the core sample
 
-        moveUntilWallBack(-30);
-        move_forward(30,150); //move away from the lever
-        Sleep(2000);
-        turn_right(30,130); //turn slightly right to face the sample
-        move_forward(30,700); //move forward to the sample
 
-        //adjust the servo arm to get the sample
-        arm_base.SetDegree(145);
-        Sleep(2.0);
-        move_forward(30,150);
-        arm_base.SetDegree(120);
-        Sleep(2.0);
-        move_forward(-60,600); //back up to take out the core sample
-        //arm_base.SetDegree(100);
-        turn_left(30,405); //turn to face the antenna
+//        //get to the core sample
+//        moveUntilWallBack(-30);
+//        move_forward(30,150); //move away from the lever
+//        Sleep(2000);
+//        turn_right(30,130); //turn slightly right to face the sample
+//        move_forward(30,700); //move forward to the sample
 
-      //  check_heading(0);
+//        //adjust the servo arm to get the sample
+//        arm_base.SetDegree(145);
+//        Sleep(2.0);
+//        move_forward(30,150);
+//        arm_base.SetDegree(120);
+//        Sleep(2.0);
+//        move_forward(-60,600); //back up to take out the core sample
+//        //arm_base.SetDegree(100);
+//        turn_left(30,405); //turn to face the antenna
 
-        arm_base.SetDegree(100);
-        move_forward(30,1450);
-        Sleep(500);//move forward all the way down the ramp to touch the antenna
-        //turn_right(30.,30);
-        turn_right(30,100);
-        Sleep(500);
-        move_forward(30.,160);
-        Sleep(500);
-        arm_base.SetDegree(90);
-        arm_base.SetDegree(145);
-        Sleep(500);
-        arm_base.SetDegree(100);
-        arm_base.SetDegree(145);
-        arm_base.SetDegree(65);
-        arm_base.SetDegree(100);
-        arm_base.SetDegree(145);
-        arm_base.SetDegree(65);
-        arm_base.SetDegree(100);
-        arm_base.SetDegree(145);
-        arm_base.SetDegree(65);
-        move_forward(-30,100);
-        arm_base.SetDegree(90);
-        Sleep(1000);
-        arm_base.SetDegree(0);
-        move_forward(-30, 100);
-        turn_left(30,200);
-        move_forward(30,450);
+//  check_heading(0);
+
+//        arm_base.SetDegree(100);
+//        move_forward(30,1450);
+//        Sleep(500);//move forward all the way down the ramp to touch the antenna
+//        //turn_right(30.,30);
+//        turn_right(30,100);
+//        Sleep(500);
+//        move_forward(30.,160);
+//        Sleep(500);
+//        arm_base.SetDegree(90);
+//        arm_base.SetDegree(145);
+//        Sleep(500);
+//        arm_base.SetDegree(100);
+//        arm_base.SetDegree(145);
+//        arm_base.SetDegree(65);
+//        arm_base.SetDegree(100);
+//        arm_base.SetDegree(145);
+//        arm_base.SetDegree(65);
+//        arm_base.SetDegree(100);
+//        arm_base.SetDegree(145);
+//        arm_base.SetDegree(65);
+//        move_forward(-30,100);
+//        arm_base.SetDegree(90);
+//        Sleep(1000);
+//        arm_base.SetDegree(0);
+//        move_forward(-30, 100);
+//        turn_left(30,200);
+//        move_forward(30,450);
 
 
 //        if (red){
