@@ -32,9 +32,9 @@ void check_x_plus(float x_coordinate) //using RPS while robot is in the +x direc
         {
             //pulse the motors for a short duration in the correct direction
 
-            right_motor.SetPercent(-30);
-            left_motor.SetPercent(30);
-            Sleep(100);
+            right_motor.SetPercent(-25);
+            left_motor.SetPercent(25);
+            Sleep(20);
             right_motor.SetPercent(0);
             left_motor.SetPercent(0);
         }
@@ -42,9 +42,9 @@ void check_x_plus(float x_coordinate) //using RPS while robot is in the +x direc
         {
             //pulse the motors for a short duration in the correct direction
 
-            right_motor.SetPercent(30);
-            left_motor.SetPercent(-30);
-            Sleep(100);
+            right_motor.SetPercent(25);
+            left_motor.SetPercent(-25);
+            Sleep(20);
             right_motor.SetPercent(0);
             left_motor.SetPercent(0);
         }
@@ -60,9 +60,9 @@ void check_x_minus(float x_coordinate) //using RPS while robot is in the -x dire
         {
             //pulse the motors for a short duration in the correct direction
 
-            right_motor.SetPercent(30);
-            left_motor.SetPercent(-30);
-            Sleep(100);
+            right_motor.SetPercent(25);
+            left_motor.SetPercent(-25);
+            Sleep(20);
             right_motor.SetPercent(0);
             left_motor.SetPercent(0);
         }
@@ -70,9 +70,9 @@ void check_x_minus(float x_coordinate) //using RPS while robot is in the -x dire
         {
             //pulse the motors for a short duration in the correct direction
 
-            right_motor.SetPercent(-30);
-            left_motor.SetPercent(30);
-            Sleep(100);
+            right_motor.SetPercent(-15);
+            left_motor.SetPercent(15);
+            Sleep(20);
             right_motor.SetPercent(0);
             left_motor.SetPercent(0);
         }
@@ -87,9 +87,9 @@ void check_y_minus(float y_coordinate) //using RPS while robot is in the -y dire
         if(RPS.Y() > y_coordinate)
         {
             //pulse the motors for a short duration in the correct direction
-            right_motor.SetPercent(-30);
-            left_motor.SetPercent(30);
-            Sleep(100);
+            right_motor.SetPercent(25);
+            left_motor.SetPercent(-25);
+            Sleep(20);
             right_motor.SetPercent(0);
             left_motor.SetPercent(0);
 
@@ -98,9 +98,9 @@ void check_y_minus(float y_coordinate) //using RPS while robot is in the -y dire
         {
             //pulse the motors for a short duration in the correct direction
 
-            right_motor.SetPercent(30);
-            left_motor.SetPercent(-30);
-            Sleep(100);
+            right_motor.SetPercent(-25);
+            left_motor.SetPercent(25);
+            Sleep(20);
             right_motor.SetPercent(0);
             left_motor.SetPercent(0);
         }
@@ -116,8 +116,8 @@ void check_y_plus(float y_coordinate) //using RPS while robot is in the +y direc
         {
             //pulse the motors for a short duration in the correct direction
 
-            right_motor.SetPercent(30);
-            left_motor.SetPercent(-30);
+            right_motor.SetPercent(-25);
+            left_motor.SetPercent(25);
             Sleep(100);
             right_motor.SetPercent(0);
             left_motor.SetPercent(0);
@@ -126,8 +126,8 @@ void check_y_plus(float y_coordinate) //using RPS while robot is in the +y direc
         {
             //pulse the motors for a short duration in the correct direction
 
-            right_motor.SetPercent(-30);
-            left_motor.SetPercent(30);
+            right_motor.SetPercent(25);
+            left_motor.SetPercent(-25);
             Sleep(100);
             right_motor.SetPercent(0);
             left_motor.SetPercent(0);
@@ -278,8 +278,13 @@ void rotate_arm(int degrees){
 }
 
 void check_red_or_blue(){
+    float timeOut = TimeNow();
     float x = CdS_cell.Value();
     while (true){
+        if(TimeNow()-timeOut >= 30.){
+            break;
+        }
+
     if (x < 0.4){
         LCD.Clear(FEHLCD::Red);
         red = true;
@@ -295,6 +300,8 @@ void check_red_or_blue(){
 
 void moveUntilWallFront(int percent){
     //Reset encoder counts
+
+    float timeOut = TimeNow();
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
 
@@ -305,6 +312,9 @@ void moveUntilWallFront(int percent){
     //keep moving until both front bumpers are closed
     while (!(frontLeft.Value() == 0
              && frontRight.Value() == 0)){
+        if(TimeNow() - timeOut >= 10){
+            break;
+        }
 
     }
     //Turn off motors
@@ -314,6 +324,7 @@ void moveUntilWallFront(int percent){
 
 void moveUntilWallBack(int percent){
     //Reset encoder counts
+    float timeOut = TimeNow();
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
 
@@ -323,6 +334,9 @@ void moveUntilWallBack(int percent){
 
     //keep moving until both front bumpers are closed
     while (!(backLeft.Value() == 0 && backRight.Value() == 0)){
+        if(TimeNow() - timeOut >= 10){
+            break;
+        }
 
     }
     //Turn off motors
@@ -362,105 +376,110 @@ int main(void)
 //        turn_left(15,20);
 
 //ENHANCED: read light
-        move_forward(20,400);
-        check_y_minus(XXXXXXXXX);//yval of light
+        move_forward(20,300);
+        check_y_minus(19);//yval of light
         turn_left(20,250);
         move_forward(15,130);
-        check_x_plus(XXXXXXXXXX);//xval of light
+        check_x_plus(10);//xval of light
         check_red_or_blue();
-        Sleep(1000);
-        turn_left(15,15);
+        turn_left(25,25);
+        //check_heading(340,3);
 
 //ENHANCED: turn satelite
         moveUntilWallFront(20);
-        Sleep(1000);
         move_forward(-30,250);
-        check_x_plus(XXXXXXX);//xval of antenna
+        check_x_plus(24.5);//xval of antenna
         turn_right(7,260);
         arm_base.SetDegree(90);
-        Sleep(1000);
         move_forward(30,400);
-        check_y_minus(XXXXXXX);//yval of fully pushed antenna
+        check_y_minus(12);//yval of fully pushed antenna
         arm_base.SetDegree(120);
-        Sleep(1000);
         move_forward(-50,270);
-        check_y_minus(XXXXXXXXX);//yval of being in the clear
+        check_y_minus(20);//yval of being in the clear
         arm_base.SetDegree(5);
         check_heading(0,10.);
-        check_x_plus(XXXXXXXXX);//xval of being below the ramp
-        turn_left(30.,245);
+        check_x_plus(19);//xval of being below the ramp
+        turn_left(30.,235);
 
 //ENHANCED: hitting button
         move_forward(50.,1100);
         turn_right(30, 280); //turn slightly to face the button
         moveUntilWallFront(30);
-        move_forward(-30,60); //aligning the robot with the button
+        move_forward(-30,150); //aligning the robot with the button
         turn_left(30,250);
         moveUntilWallFront(30);
-        move_forward(-30,200);
+        move_forward(-15,250);
         arm_base.SetDegree(110);
-        move_forward(30,200);
+        Sleep(1000);
+        move_forward(30,100);
         Sleep(6000);
 
 //ENHANCED: Toggle Lever
+        //check_heading(0,2);
         move_forward(-30., 520);
-        check_y_plus(XXXXXXXXXXX);//yval of lever
+        check_y_plus(48.5);//yval of lever
         arm_base.SetDegree(5);
         turn_left(30.,240);
         check_heading(180,3);
-        moveUntilWallBack(20);
-        Sleep(1000);
-        move_forward(30., 630);
-        check_x_minus(XXXXXXXXXXXXX);//xval of lever
+        moveUntilWallBack(-20);
+        move_forward(30., 660);
+        check_x_minus(12);//xval of lever
+        move_forward(30,50);
         arm_base.SetDegree(105);
-        Sleep(1.0);
+        Sleep(500);
         move_forward(-30,100);
         arm_base.SetDegree(5);
 
 //ENHANCED: Gather Core Sample
         moveUntilWallBack(-30);
-        move_forward(30,100);
-        check_x_minus(XXXXXXXX);//xval of core alignment
+        move_forward(30,150);
+        check_x_minus(30);//xval of core alignment
         Sleep(2000);
-        turn_right(30,130);
-        float angle = atan((XXXXXX-RPS.Y())/(XXXXXXX-RPS.X())); //(lever 'YValue')(Lever 'XValue)
-        check_heading(angle,10.);
+        turn_right(30,30);
+        //float angle = atan(18/-22.5); //(lever 'YValue')(Lever 'XValue)
+       // check_heading(155,10.);
+        check_heading(135,10);
         move_forward(30,700);
         arm_base.SetDegree(145);
+        hand_base.SetDegree(130);
         Sleep(2.0);
-        move_forward(30,150);
+        move_forward(30,200);
         arm_base.SetDegree(120);
         Sleep(2.0);
-        move_forward(-60,550);
+        move_forward(-60,700);
 //        if(RPS.X()==-1){
 //            move_forward(30,20);
 //            move_forward(-60,500);
 //        }
-        check_x_minus(XXXXXXXX);//xval of ramp
+        check_x_minus(20);//xval of ramp
+        turn_left(20,200);
         check_heading(270,10.);
 
 //ENHANCED: Drop Sample into Bucket
-        move_forward(1200);
-        check_y_minus(XXXXXXXX);//yval of location to dump sample
+        move_forward(30,800);
+        check_y_minus(20);//yval of location to dump sample
         if(red){
             turn_right(20,140);
-            move_forward(300);
+            move_forward(30,300);
             hand_base.SetDegree(0);
+
         }
         else{
-            turn_right(20,40);
-            move_forward(200);
+            turn_right(20,250);
+            move_forward(30,200);
             hand_base.SetDegree(0);
         }
+        Sleep(500);
         arm_base.SetDegree(0);
 
 //ENHANCED: Push Final Button
-        move_forward(-30,100);
-        check_heading(180,3);
+        move_forward(-30,50);
+        check_heading(160,3);
         moveUntilWallFront(30);
-        move_forward(-30,150);
-        turn_right(20,250);
-        moveUntilWallFront(30);
+        hand_base.SetDegree(110);
+        move_forward(-30,50);
+        turn_left(20,250);
+        moveUntilWallBack(-30);
 
 
 //        //from start position to button
@@ -601,3 +620,4 @@ int main(void)
 
     return 0;
 }
+
