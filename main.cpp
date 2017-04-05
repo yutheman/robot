@@ -299,10 +299,7 @@ void turn_left(int percent, int counts) //using encoders
 bool wait_for_light(){
     bool off = true;
     float timeOut = TimeNow();
-    while (off){
-        if (TimeNow() - timeOut >= 30.){
-            off= false;
-        }
+    while (off || TimeNow() - timeOut < 10){
         float x = CdS_cell.Value();
         if (x < 1) {
             off = false;
@@ -422,8 +419,8 @@ int main(void)
 //ENHANCED: turn satelite
         moveUntilWallFront(30);
         move_forward(-30,250);
-        check_x_plus(24.3);//xval of antenna
-        turn_right(7,265);
+        check_x_plus(24.5);//xval of antenna
+        turn_right(7,255);
         move_forward(-30,50);
         arm_base.SetDegree(90);
         move_forward(30,450);
@@ -438,8 +435,8 @@ int main(void)
         turn_left(30.,235);
 
 //Toggle LEVER
-        move_forward(50,1100);
-        check_y_plus(49.5);
+        move_forward(50,1000);
+        check_y_plus(49.2);
         turn_left(30,250);
         check_x_minus(12);//xval of lever
         move_forward(30,50);
@@ -449,13 +446,13 @@ int main(void)
         arm_base.SetDegree(5);
         moveUntilWallBack(-30);
 
-        move_forward(30,150); //aligning the robot with the button
+        move_forward(30,180); //aligning the robot with the button
         turn_right(30,250);
         moveUntilWallFront(30);
         move_forward(-15,250);
         arm_base.SetDegree(110);
         Sleep(1000);
-        move_forward(30,170);
+        move_forward(30,150);
         Sleep(6000);
         check_y_plus(50);
         turn_left(30,250);
@@ -499,7 +496,7 @@ int main(void)
         turn_right(30,30);
         //float angle = atan(18/-22.5); //(lever 'YValue')(Lever 'XValue)
        // check_heading(155,10.);
-        check_heading(137,10);
+        check_heading(130,10); //used to be 137
         move_forward(30,500);
         arm_base.SetDegree(145);
         hand_base.SetDegree(130);
@@ -514,27 +511,32 @@ int main(void)
 //        }
         check_x_minus(20);//xval of ramp
         turn_left(20,200);
-        check_heading(270,10.);
+        check_heading(250,10.);
 
 //ENHANCED: Drop Sample into Bucket
-        move_forward(30,800);
-        check_y_minus(20);//yval of location to dump sample
-        if(red){
-            turn_right(20,140);
-            move_forward(30,320);
-            hand_base.SetDegree(0);
+        move_forward(30,800); //going down the ramp
+        check_y_minus(21);//yval of location to dump sample
+//        if(red){
+//            turn_right(20,250);
+//            move_forward(30,320);
 
-        }
-        else{
+//            hand_base.SetDegree(0);
+
+ //       }
+ //       else{
             turn_right(20,250);
             move_forward(30,200);
+            check_x_minus(15);
+            turn_left(20,250);
+            move_forward(30,150);
+            check_y_minus_timeout(12);
             hand_base.SetDegree(0);
-        }
+ //       }
         Sleep(1000);
         arm_base.SetDegree(0);
 
 //ENHANCED: Push Final Button
-        move_forward(-30,50);
+        move_forward(-30,200);
         check_heading(170,3);
         moveUntilWallFront(30);
         hand_base.SetDegree(110);
