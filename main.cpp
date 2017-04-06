@@ -134,7 +134,7 @@ void check_y_minus_timeout(float y_coordinate) //using RPS while robot is in the
             left_motor.SetPercent(0);
         }
 
-        if(TimeNow()-timeOut >= 5.0){
+        if(TimeNow()-timeOut >= 2.5){
             break;
         }
     }
@@ -299,7 +299,7 @@ void turn_left(int percent, int counts) //using encoders
 bool wait_for_light(){
     bool off = true;
     float timeOut = TimeNow();
-    while (off || TimeNow() - timeOut < 10){
+    while (off){ // || TimeNow() - timeOut < 10
         float x = CdS_cell.Value();
         if (x < 1) {
             off = false;
@@ -419,7 +419,7 @@ int main(void)
 //ENHANCED: turn satelite
         moveUntilWallFront(30);
         move_forward(-30,250);
-        check_x_plus(24.5);//xval of antenna
+        check_x_plus(23.5);//xval of antenna
         turn_right(7,255);
         move_forward(-30,50);
         arm_base.SetDegree(90);
@@ -435,12 +435,12 @@ int main(void)
         turn_left(30.,235);
 
 //Toggle LEVER
-        move_forward(50,1000);
-        check_y_plus(49.2);
+        move_forward(50,900);
+        check_y_plus(48.5);
         turn_left(30,250);
         check_x_minus(12);//xval of lever
         move_forward(30,50);
-        arm_base.SetDegree(105);
+        arm_base.SetDegree(95);
         Sleep(500);
         move_forward(-30,100);
         arm_base.SetDegree(5);
@@ -451,52 +451,56 @@ int main(void)
         moveUntilWallFront(30);
         move_forward(-15,250);
         arm_base.SetDegree(110);
-        Sleep(1000);
-        move_forward(30,150);
+        Sleep(2500);
+        move_forward(30,100);
         Sleep(6000);
         check_y_plus(50);
         turn_left(30,250);
+        check_heading(180,10.);
         //moveUntilWallBack(20);
 
-////ENHANCED: hitting button
-//        move_forward(50.,1100);
-//        turn_right(30, 280); //turn slightly to face the button
-//        moveUntilWallFront(30);
-//        move_forward(-30,150); //aligning the robot with the button
-//        turn_left(30,250);
-//        moveUntilWallFront(30);
-//        move_forward(-15,250);
-//        arm_base.SetDegree(110);
-//        Sleep(1000);
-//        move_forward(30,100);
-//        Sleep(6000);
+                                                                    ////ENHANCED: hitting button
+                                                                    //        move_forward(50.,1100);
+                                                                    //        turn_right(30, 280); //turn slightly to face the button
+                                                                    //        moveUntilWallFront(30);
+                                                                    //        move_forward(-30,150); //aligning the robot with the button
+                                                                    //        turn_left(30,250);
+                                                                    //        moveUntilWallFront(30);
+                                                                    //        move_forward(-15,250);
+                                                                    //        arm_base.SetDegree(110);
+                                                                    //        Sleep(1000);
+                                                                    //        move_forward(30,100);
+                                                                    //        Sleep(6000);
 
-////ENHANCED: Toggle Lever
-//        //check_heading(0,2);
-//        move_forward(-30., 520);
-//        check_y_plus(50);//yval of lever
-//        arm_base.SetDegree(5);
-//        turn_left(30.,240);
-//        check_heading(180,3);
-//        moveUntilWallBack(-20);
-//        move_forward(30., 660);
-//        check_x_minus(12);//xval of lever
-//        move_forward(30,50);
-//        arm_base.SetDegree(105);
-//        Sleep(500);
-//        move_forward(-30,100);
-//        arm_base.SetDegree(5);
-//        check_heading(180,5);
+                                                                    ////ENHANCED: Toggle Lever
+                                                                    //        //check_heading(0,2);
+                                                                    //        move_forward(-30., 520);
+                                                                    //        check_y_plus(50);//yval of lever
+                                                                    //        arm_base.SetDegree(5);
+                                                                    //        turn_left(30.,240);
+                                                                    //        check_heading(180,3);
+                                                                    //        moveUntilWallBack(-20);
+                                                                    //        move_forward(30., 660);
+                                                                    //        check_x_minus(12);//xval of lever
+                                                                    //        move_forward(30,50);
+                                                                    //        arm_base.SetDegree(105);
+                                                                    //        Sleep(500);
+                                                                    //        move_forward(-30,100);
+                                                                    //        arm_base.SetDegree(5);
+                                                                    //        check_heading(180,5);
 
 //ENHANCED: Gather Core Sample
-        moveUntilWallBack(-30);
+        float time = TimeNow();
+        while (TimeNow()-time < 3){
+            moveUntilWallBack(-25);
+        }
         move_forward(30,150);
         check_x_minus(29);//xval of core alignment
         Sleep(2000);
         turn_right(30,30);
         //float angle = atan(18/-22.5); //(lever 'YValue')(Lever 'XValue)
        // check_heading(155,10.);
-        check_heading(130,10); //used to be 137
+        check_heading(135,10); //used to be 137
         move_forward(30,500);
         arm_base.SetDegree(145);
         hand_base.SetDegree(130);
@@ -510,8 +514,9 @@ int main(void)
 //            move_forward(-60,500);
 //        }
         check_x_minus(20);//xval of ramp
-        turn_left(20,200);
-        check_heading(250,10.);
+        turn_left(20,250);
+        check_heading(250,10.); //used to be 250
+        Sleep(2000);
 
 //ENHANCED: Drop Sample into Bucket
         move_forward(30,800); //going down the ramp
@@ -529,15 +534,15 @@ int main(void)
             check_x_minus(15);
             turn_left(20,250);
             move_forward(30,150);
-            check_y_minus_timeout(12);
+            check_y_minus_timeout(15.5);
             hand_base.SetDegree(0);
  //       }
         Sleep(1000);
         arm_base.SetDegree(0);
 
 //ENHANCED: Push Final Button
-        move_forward(-30,200);
-        check_heading(170,3);
+        move_forward(-30,230);
+        check_heading(180,3);
         moveUntilWallFront(30);
         hand_base.SetDegree(110);
         move_forward(-30,30);
