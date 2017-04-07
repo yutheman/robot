@@ -177,15 +177,15 @@ void check_heading(float heading, float timeOut) //using RPS
         {
          if (RPS.Heading() > 180)
          {
-             right_motor.SetPercent(12);
-             left_motor.SetPercent(12);
+             right_motor.SetPercent(15);
+             left_motor.SetPercent(15);
              Sleep(10);
         }
 
       if (RPS.Heading() < 180)
       {
-          right_motor.SetPercent(-12);
-          left_motor.SetPercent(-12);
+          right_motor.SetPercent(-15);
+          left_motor.SetPercent(-15);
           Sleep(10);
 
             }
@@ -200,16 +200,16 @@ void check_heading(float heading, float timeOut) //using RPS
             {
              if (RPS.Heading() < heading)
              {
-                 right_motor.SetPercent(12);
-                 left_motor.SetPercent(12);
+                 right_motor.SetPercent(15);
+                 left_motor.SetPercent(15);
                  Sleep(10);
 
             }
 
           if (RPS.Heading() > heading)
           {
-              right_motor.SetPercent(-12);
-              left_motor.SetPercent(-12);
+              right_motor.SetPercent(-15);
+              left_motor.SetPercent(-15);
               Sleep(10);
 
                 }
@@ -419,8 +419,9 @@ int main(void)
 //ENHANCED: turn satelite
         moveUntilWallFront(30);
         move_forward(-30,250);
-        check_x_plus(23.5);//xval of antenna
+        check_x_plus(23.9);//xval of antenna
         turn_right(7,255);
+        check_heading(270,2.);
         move_forward(-30,50);
         arm_base.SetDegree(90);
         move_forward(30,450);
@@ -430,17 +431,19 @@ int main(void)
         move_forward(-50,270);
         check_y_minus(20);//yval of being in the clear
         arm_base.SetDegree(5);
-        check_heading(0,10.);
+        turn_left(30,230);
+        check_heading(0,3.);
         check_x_plus(19);//xval of being below the ramp
         turn_left(30.,235);
 
 //Toggle LEVER
         move_forward(50,900);
-        check_y_plus(48.5);
+        check_y_plus(49);
         turn_left(30,250);
+        check_heading(180,2.);
         check_x_minus(12);//xval of lever
-        move_forward(30,50);
-        arm_base.SetDegree(95);
+        move_forward(30,65);
+        arm_base.SetDegree(125);
         Sleep(500);
         move_forward(-30,100);
         arm_base.SetDegree(5);
@@ -450,9 +453,9 @@ int main(void)
         turn_right(30,250);
         moveUntilWallFront(30);
         move_forward(-15,250);
-        arm_base.SetDegree(110);
-        Sleep(2500);
-        move_forward(30,100);
+        arm_base.SetDegree(115);
+        Sleep(500);
+        move_forward(30,110);
         Sleep(6000);
         check_y_plus(50);
         turn_left(30,250);
@@ -497,26 +500,26 @@ int main(void)
         move_forward(30,150);
         check_x_minus(29);//xval of core alignment
         Sleep(2000);
-        turn_right(30,30);
+        turn_right(30,90);
         //float angle = atan(18/-22.5); //(lever 'YValue')(Lever 'XValue)
        // check_heading(155,10.);
-        check_heading(135,10); //used to be 137
+        check_heading(136,10); //used to be 137
         move_forward(30,500);
         arm_base.SetDegree(145);
         hand_base.SetDegree(130);
         Sleep(2.0);
         move_forward(50,300);
-        arm_base.SetDegree(120);
+        arm_base.SetDegree(125);
         Sleep(2.0);
         move_forward(-60,400);
 //        if(RPS.X()==-1){
 //            move_forward(30,20);
 //            move_forward(-60,500);
 //        }
-        check_x_minus(20);//xval of ramp
+        check_x_minus(22);//xval of ramp
         turn_left(20,250);
         check_heading(250,10.); //used to be 250
-        Sleep(2000);
+        Sleep(500);
 
 //ENHANCED: Drop Sample into Bucket
         move_forward(30,800); //going down the ramp
@@ -530,22 +533,26 @@ int main(void)
  //       }
  //       else{
             turn_right(20,250);
+            check_heading(180,2.);
             move_forward(30,200);
-            check_x_minus(15);
-            turn_left(20,250);
+            check_x_minus(14);
+            turn_left(20,225);
+            arm_base.SetDegree(100);
             move_forward(30,150);
-            check_y_minus_timeout(15.5);
+            check_y_minus_timeout(16.5);
             hand_base.SetDegree(0);
  //       }
         Sleep(1000);
         arm_base.SetDegree(0);
+        hand_base.SetDegree(110);
 
 //ENHANCED: Push Final Button
         move_forward(-30,230);
-        check_heading(180,3);
+        turn_right(30,250);
+        check_heading(180,7);
         moveUntilWallFront(30);
         hand_base.SetDegree(110);
-        move_forward(-30,30);
+        move_forward(-30,25);
         turn_left(20,250);
         moveUntilWallBack(-30);
 
